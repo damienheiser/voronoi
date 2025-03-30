@@ -44,6 +44,27 @@ function neighbors_walls_path_cost(sample,seeds,w,h,walls,path_points){
     return ((min_free_dist < 1)?10000:(100.0/min_free_dist))
 }
 
+animateSeeds(newPositions, duration = 500) {
+    let startTime = performance.now();
+    let initialPositions = this.array.map(p => ({ x: p.x, y: p.y }));
+
+    let animate = (time) => {
+        let progress = Math.min((time - startTime) / duration, 1);
+        this.array = initialPositions.map((start, i) => ({
+            x: start.x + (newPositions[i].x - start.x) * progress,
+            y: start.y + (newPositions[i].y - start.y) * progress
+        }));
+        vor.draw();
+
+        if (progress < 1) {
+            requestAnimationFrame(animate);
+        }
+    };
+
+    requestAnimationFrame(animate);
+}
+
+
 function neighbors_walls_cost(sample,seeds,w,h,walls){
     let free_dist = []
     for(let j= 0;j<seeds.length;j++){
