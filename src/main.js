@@ -433,6 +433,15 @@ function addRelaxationButton(parent) {
     });
 }
 
+function addLiveRelaxationToggle(parent) {
+    let toggle = bs.toggle(parent, "Live Preview", "Manual Apply");
+    
+    $(toggle).change(() => {
+        vor.liveRelaxation = toggle.checked;
+    });
+}
+
+
 
 
 main();
