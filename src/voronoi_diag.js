@@ -82,6 +82,21 @@ class cell{
             this.edges.push(edge)
         }
     }
+
+    computeCentroids(diagram) {
+    return diagram.cells.map(cell => {
+        let x = 0, y = 0, count = 0;
+        cell.halfedges.forEach(halfedge => {
+            let vertex = halfedge.getStartpoint();
+            x += vertex.x;
+            y += vertex.y;
+            count++;
+        });
+        return count ? { x: x / count, y: y / count } : cell.site;
+    });
+}
+
+    
     /**
      * M(point-1) C(control-1) (control-2) (point-2)
      * S(control-next) (point-next)
@@ -332,6 +347,8 @@ class voronoi_diag{
         this.cells.forEach((c)=>{this.org_cells.push(c.copy())})
         this.edges = diag.edges
     }
+
+    
     
     retract_cells(params){
         const dist = parseFloat(params.retraction)
