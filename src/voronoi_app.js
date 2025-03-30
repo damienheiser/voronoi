@@ -90,14 +90,10 @@ class voronoi_app{
         return this.svg.main
     }
 
-    function addRelaxationButton(parent) {
-        let btn_relax = bs.button(parent, "btn_relax", "Lloyd's Relaxation");
-        
-        $(btn_relax).click(() => {
-            vor.applyLloydRelaxation(5);
-        });
+    applyLloydRelaxation(iterations = 5) {
+        this.seeds.lloydRelaxation(this.diagram, iterations);
+        this.draw();
     }
-
 
     clear_svg(svg_el){
         let children = [ ...svg_el.children];
@@ -355,6 +351,7 @@ class voronoi_app{
         document.addEventListener('dragleave', onDragEvents, false)
         document.addEventListener('drop',      onDragEvents, false)
     }
+
 
 
 }
