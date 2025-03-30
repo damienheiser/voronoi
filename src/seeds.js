@@ -97,23 +97,50 @@ class Seeds{
         this.config.map_power_range = {min:0.1,max:3,step:0.1}
     }
 
-    lloydRelaxation(voronoi, iterations = 5) {
-        for (let i = 0; i < iterations; i++) {
-            let diagram = voronoi.compute(this.array, this.config.area);
-
-            this.array = diagram.cells.map(cell => {
-                let x = 0, y = 0, count = 0;
-                cell.halfedges.forEach(halfedge => {
-                    let vertex = halfedge.getStartpoint();
-                    x += vertex.x;    
-                    y += vertex.y;
-                    count++;
+        lloydRelaxation(voronoi, iterations = 5) {
+            for (let i = 0; i < iterations; i++) {
+                let diagram = voronoi.compute(this.array, this.config.area);
+                this.array = diagram.cells.map(cell => {
+                    if (vor.relaxationMode === "Weighted") {
+                        return this.computeWeightedCentroid(cell);
+                    } else if (vor.relaxationMode === "Adaptive") {
+                        let centroid = this.computeWeightedCentroid(cell);
+                        return {
+                            x: centroid.x * 0.8 + cell.site.x * 0.2,
+                            y: centroid.y * 0.8 + cell.site.y * 0.2
+                        };
+                    }
+                    return this.computeCentroid(cell);
                 });
-                return count ? { x: x / count, y: y / count } : cell.site;
-            });
+            }
         }
-        console.log("Lloyd relaxation applied");
+
+        computeWeightedCentroid(cell) {
+        let x = 0, y = 0, weight = 0;
+        cell.halfedges.forEach(halfedge => {
+            let vertex = halfedge.getStartpoint();
+            let w = 1 / (1 + geom.distance(cell.site, vertex));  // Inverse distance weighting
+            x += vertex.x * w;
+            y += vertex.y * w;
+            weight += w;
+        });
+        return { x: x / weight, y: y / weight };
     }
+
+
+    constrainSeedMovement(seed, minDistance = 10) {
+        this.array.forEach(other => {
+            if (other !== seed) {
+                let dist = geom.distance(seed, other);
+                if (dist < minDistance) {
+                    let angle = Math.atan2(seed.y - other.y, seed.x - other.x);
+                    seed.x += Math.cos(angle) * (minDistance - dist);
+                    seed.y += Math.sin(angle) * (minDistance - dist);
+                }
+            }
+        });
+    }
+
 
     applyLloydRelaxation(voronoi, iterations = 5) {
         if (vor.liveRelaxation) {
