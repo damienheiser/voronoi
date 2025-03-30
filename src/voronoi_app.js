@@ -90,6 +90,15 @@ class voronoi_app{
         return this.svg.main
     }
 
+    function addRelaxationButton(parent) {
+        let btn_relax = bs.button(parent, "btn_relax", "Lloyd's Relaxation");
+        
+        $(btn_relax).click(() => {
+            vor.applyLloydRelaxation(5);
+        });
+    }
+
+
     clear_svg(svg_el){
         let children = [ ...svg_el.children];
         children.forEach((child)=>{
