@@ -243,6 +243,22 @@ function menu_nb_seeds(parent){
 
 }
 
+function addRelaxationControls(parent) {
+    html(parent, `<h5 style="margin-bottom:5px;color:#1F7BFD">Lloyd's Relaxation</h5>`);
+    
+    let slider = bs.input_range(parent, 10, 5);  // Allow 1-10 iterations
+    let btn_relax = bs.button(parent, "btn_relax", "Apply Relaxation");
+
+    $(btn_relax).click(() => {
+        let iterations = slider.value;
+        vor.applyLloydRelaxation(iterations);
+    });
+
+    $(slider).on("input", () => {
+        btn_relax.innerText = `Apply ${slider.value} Iterations`;
+    });
+}
+
 function menu_sampling(parent){
     let scfg = vor.seeds.config
     html(parent,/*html*/`<h5 style="margin-bottom:5px;color:#1F7BFD">Sampling</h5>`)
