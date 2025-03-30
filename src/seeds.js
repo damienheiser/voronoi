@@ -75,6 +75,25 @@ class Seeds{
         this.config.map_power = 1
         this.config.map_power_range = {min:0.1,max:3,step:0.1}
     }
+
+    lloydRelaxation(voronoi, iterations = 5) {
+        for (let i = 0; i < iterations; i++) {
+            let diagram = voronoi.compute(this.array, this.config.area);
+
+            this.array = diagram.cells.map(cell => {
+                let x = 0, y = 0, count = 0;
+                cell.halfedges.forEach(halfedge => {
+                    let vertex = halfedge.getStartpoint();
+                    x += vertex.x;    
+                    y += vertex.y;
+                    count++;
+                });
+                return count ? { x: x / count, y: y / count } : cell.site;
+            });
+        }
+        console.log("Lloyd relaxation applied");
+    }
+    
     //cost selection
     best_seed_path_and_cost(samples){
         const seeds = this.array
