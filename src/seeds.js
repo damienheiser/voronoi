@@ -93,6 +93,15 @@ class Seeds{
         }
         console.log("Lloyd relaxation applied");
     }
+
+    applyLloydRelaxation(voronoi, iterations = 5) {
+        if (vor.liveRelaxation) {
+            requestAnimationFrame(() => this.lloydRelaxation(voronoi, iterations));
+        } else {
+            this.lloydRelaxation(voronoi, iterations);
+        }
+    }
+
     
     //cost selection
     best_seed_path_and_cost(samples){
